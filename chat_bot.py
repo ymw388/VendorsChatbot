@@ -19,7 +19,6 @@ bedrock_client = boto3.client("bedrock-runtime", region_name=REGION)
 llm = BedrockChat(
     model_id="anthropic.claude-3-sonnet-20240229-v1:0",
     client=bedrock_client,
-    temperature=0.1,
 )
 
 # --- SQLite database setup ---
