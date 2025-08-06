@@ -12,27 +12,30 @@ import boto3
 load_dotenv()
 
 # --- AWS Bedrock Setup ---
-# Make sure the EC2 IAM role has Bedrock permissions, or set .env with keys
 bedrock_client = boto3.client("bedrock-runtime", region_name="us-west-2")
 
-# Choose a Bedrock model
 llm = ChatBedrock(
-    model_id="anthropic.claude-3-sonnet-20240229-v1:0",  # Or switch to Titan/Mistral
+    model_id="anthropic.claude-3-sonnet-20240229-v1:0",  # Bedrock model
     client=bedrock_client,
     temperature=0.1
 )
 
 # --- SQLite Database Setup ---
-# Assumes spend_data.db is in the current directory
 db_uri = "sqlite:///spend_data.db"
-db = SQLDatabase.from_uri(db_uri)
+
+# 👇 Explicitly specify the tables you want the LLM to know about
+db = SQLDatabase.from_uri(
+    db_uri,
+    include_tables=["SLO_DATA", "Totals", "Copy", "Original", "Sub_Data", "DVBE_SB_MB"]
+)
 
 # --- LangChain Agent Setup ---
 toolkit = SQLDatabaseToolkit(db=db, llm=llm)
 agent_executor = create_sql_agent(
     llm=llm,
     toolkit=toolkit,
-    verbose=True
+    verbose=True,
+    handle_parsing_errors=True  # 👈 key addition to fix your error
 )
 
 # --- Chatbot Loop ---
