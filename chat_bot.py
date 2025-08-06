@@ -2,7 +2,7 @@
 
 import os
 from dotenv import load_dotenv
-from langchain.chat_models import ChatBedrock
+from langchain_community.chat_models import ChatBedrock
 from langchain.agents import create_sql_agent
 from langchain.agents.agent_toolkits import SQLDatabaseToolkit
 from langchain.sql_database import SQLDatabase
